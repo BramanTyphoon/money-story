@@ -1,2 +1,2 @@
 # money-story
-A data story of 15 years of liv
+A data story of 10+ years of living
