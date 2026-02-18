@@ -121,3 +121,4 @@ cython_debug/
 
 # Repo-specific
 data_private/
+data_public/
