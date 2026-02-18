@@ -1,0 +1,48 @@
+---
+title: "SQL Playground"
+subtitle: "Query the public spending dataset with SQL"
+format:
+  html:
+    page-layout: full
+---
+
+Select a preset query or write your own SQL. All queries run locally in your browser
+via DuckDB-Wasm — no data leaves your machine.
+
+<div class="control-bar">
+  <label for="preset-select">Preset:</label>
+  <select id="preset-select"></select>
+  <button id="run-btn">Run (Ctrl+Enter)</button>
+</div>
+
+<textarea id="sql-editor" class="sql-editor" rows="8" spellcheck="false"></textarea>
+<div id="query-info" class="query-info"></div>
+<div id="results" class="results-table"></div>
+
+::: {.callout-note}
+## Available Tables
+- `'data_public/spend_monthly_category.parquet'` — columns: `month`, `category_l1`, `category_l2`, `amount`
+- `'data_public/income_monthly.parquet'` — columns: `month`, `income_amount`
+- `'data_public/events_public.parquet'` — columns: `event_id`, `label`, `start_date`, `end_date`, `type`
+:::
+
+::: {.callout-tip}
+## Tips
+- Use **Ctrl+Enter** (or Cmd+Enter on Mac) to run queries quickly.
+- Results are limited to 500 rows for display performance.
+- DuckDB supports standard SQL — try `PIVOT`, window functions, or `EXTRACT(YEAR FROM month)`.
+:::
+
+```{=html}
+<script type="module">
+import { initPlayground } from "./assets/js/sql_playground.js";
+
+initPlayground({
+  presetSelect: document.getElementById("preset-select"),
+  textarea: document.getElementById("sql-editor"),
+  runBtn: document.getElementById("run-btn"),
+  resultsDiv: document.getElementById("results"),
+  infoDiv: document.getElementById("query-info"),
+});
+</script>
+```

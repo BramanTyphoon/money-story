@@ -1,0 +1,67 @@
+---
+title: "Job Changes & Income"
+subtitle: "How career transitions reshape spending patterns"
+execute:
+  echo: false
+---
+
+```{python}
+import sys
+sys.path.insert(0, "../..")
+from analysis.story_charts import (
+    income_vs_spend_over_time,
+    spend_around_job_change,
+    category_shift_at_events,
+)
+```
+
+## Income vs. Spending
+
+The fundamental question: as income grows, does spending keep pace — or does the gap widen?
+
+```{python}
+income_vs_spend_over_time().show()
+```
+
+Each job change produces a visible income step. Spending follows, but with a lag —
+there's typically a 2–3 month adjustment period before new spending patterns emerge.
+The light bars show monthly savings (income minus spending); green means positive,
+red means a deficit month.
+
+## Spending Around Job Changes
+
+Zooming in on the ±6 months around each job transition reveals how quickly spending
+adapts to new income levels.
+
+```{python}
+spend_around_job_change().show()
+```
+
+The pattern is consistent: spending is relatively flat in the months before a change,
+then ramps up in the 2–4 months following. The 2021 transition to a lead role shows
+the most dramatic shift, likely because it coincided with a period of pent-up demand.
+
+## Category Mix Shifts
+
+Not all spending increases equally. This chart compares average monthly spending by
+category in the 6 months before vs. after the most recent job change.
+
+```{python}
+category_shift_at_events().show()
+```
+
+The biggest movers tend to be **Food** (restaurants in particular), **Entertainment**,
+and **Shopping** — discretionary categories that are easy to ratchet up when income
+rises. Meanwhile, fixed costs like **Healthcare** and **Subscriptions** remain stable.
+
+## Key Takeaways
+
+1. **Income growth doesn't automatically mean savings growth** — spending adapts within months.
+2. **Discretionary categories absorb most of the increase** — housing stays fixed until a move.
+3. **Awareness helps** — tracking these shifts in real-time could enable more intentional allocation.
+
+::: {.callout-note}
+## Data Note
+All figures are monthly aggregates. Income is post-tax take-home pay.
+No individual transactions or merchant names are shown.
+:::

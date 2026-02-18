@@ -1,0 +1,39 @@
+project:
+  type: website
+  output-dir: _site
+  resources:
+    - data_public/**
+    - assets/js/**
+  pre-render: ln -sfn ../../data_public data_public
+
+website:
+  title: "Money Story"
+  navbar:
+    left:
+      - href: index.qmd
+        text: Home
+      - text: Story
+        menu:
+          - href: story/lifestyle-creep.qmd
+            text: Lifestyle Creep
+          - href: story/job-changes.qmd
+            text: Job Changes & Income
+      - text: Explore
+        menu:
+          - href: explore/categories-over-time.qmd
+            text: Categories Over Time
+          - href: explore/sankey.qmd
+            text: Sankey Diagram
+          - href: explore/sql-playground.qmd
+            text: SQL Playground
+
+format:
+  html:
+    theme: cosmo
+    css: assets/css/styles.css
+    include-in-header:
+      text: |
+        <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+
+execute:
+  freeze: auto

@@ -1,0 +1,59 @@
+---
+title: "Categories Over Time"
+subtitle: "Interactive exploration of spending by category"
+format:
+  html:
+    page-layout: full
+---
+
+<div class="control-bar">
+  <label for="level-select">Category Level:</label>
+  <select id="level-select">
+    <option value="category_l1" selected>L1 (broad)</option>
+    <option value="category_l2">L2 (detailed)</option>
+  </select>
+
+  <label for="topn-select">Top N:</label>
+  <select id="topn-select">
+    <option value="5">5</option>
+    <option value="8">8</option>
+    <option value="10" selected>10</option>
+    <option value="15">15</option>
+  </select>
+
+  <button id="update-btn">Update Chart</button>
+</div>
+
+<div id="chart-loading" class="loading-spinner">Initializing DuckDB-Wasm and loading data…</div>
+<div id="category-chart" class="chart-container" style="display:none;"></div>
+
+Use the **range selector buttons** (1y/3y/5y/All) or the **range slider** below the chart
+to adjust the time window. Click legend entries to toggle categories on/off.
+Scroll to zoom; double-click to reset.
+
+::: {.callout-tip}
+## Tip
+Use the L2 level to see subcategories (e.g., Groceries vs. Restaurants within Food).
+:::
+
+```{=html}
+<script type="module">
+import { renderCategoryTimeSeries } from "./assets/js/explore_charts.js";
+
+async function update() {
+  const level = document.getElementById("level-select").value;
+  const topN = parseInt(document.getElementById("topn-select").value);
+
+  document.getElementById("chart-loading").style.display = "none";
+  document.getElementById("category-chart").style.display = "block";
+
+  await renderCategoryTimeSeries("category-chart", { level, topN });
+}
+
+document.getElementById("update-btn").addEventListener("click", update);
+document.getElementById("level-select").addEventListener("change", update);
+
+// Initial render
+update();
+</script>
+```

@@ -1,0 +1,57 @@
+---
+title: "Money Story"
+subtitle: "A data-driven exploration of 10+ years of personal spending"
+---
+
+## What Is This?
+
+Money Story is a portfolio project that transforms a decade of personal financial data into
+an interactive data story. It explores how spending patterns evolve alongside life events —
+career changes, relocations, and the slow creep of lifestyle inflation.
+
+## Two Ways to Explore
+
+### Static Story
+
+Pre-rendered narrative pages with charts that highlight key insights:
+
+- **[Lifestyle Creep](story/lifestyle-creep.qmd)** — How total spending grows over time,
+  which categories drive it, and the role of life events.
+- **[Job Changes & Income](story/job-changes.qmd)** — How income transitions affect
+  spending behavior and category mix.
+
+### Interactive Exploration
+
+In-browser tools powered by [DuckDB-Wasm](https://duckdb.org/docs/api/wasm/overview) —
+no backend server, all computation happens locally:
+
+- **[Categories Over Time](explore/categories-over-time.qmd)** — Multi-series time chart
+  with zoom, toggle, and filtering.
+- **[Sankey Diagram](explore/sankey.qmd)** — Income flow visualization for any date range.
+- **[SQL Playground](explore/sql-playground.qmd)** — Run SQL queries against the public dataset.
+
+## Data & Privacy
+
+All public data is **monthly aggregates** — no individual transactions, no merchant names,
+no exact timestamps. The source data is private and never committed to this repository.
+
+**Public tables:**
+
+| Table | Description |
+|-------|-------------|
+| `spend_monthly_category.parquet` | Monthly spending by category (L1 + L2) |
+| `income_monthly.parquet` | Monthly income totals |
+| `events_public.parquet` | Life event labels and date ranges |
+
+## Methodology
+
+- Expenses are categorized into a two-level hierarchy (10 L1 categories, ~28 L2 subcategories).
+- Income is post-tax take-home pay.
+- All amounts are nominal (not inflation-adjusted).
+- Charts use 6-month rolling averages to smooth seasonal variation.
+
+## Technology
+
+Built with [Quarto](https://quarto.org), [Plotly](https://plotly.com/python/),
+[Polars](https://pola.rs), and [DuckDB-Wasm](https://duckdb.org/docs/api/wasm/overview).
+Hosted on GitHub Pages with automated CI/CD.

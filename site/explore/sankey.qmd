@@ -1,0 +1,72 @@
+---
+title: "Sankey Diagram"
+subtitle: "Visualize how income flows into spending categories"
+format:
+  html:
+    page-layout: full
+---
+
+Select a date range and category level, then click **Generate** to build the Sankey diagram.
+Income flows into spending categories; any surplus appears as Savings.
+
+<div class="control-bar">
+  <label for="sankey-start">Start:</label>
+  <input type="month" id="sankey-start">
+
+  <label for="sankey-end">End:</label>
+  <input type="month" id="sankey-end">
+
+  <label for="sankey-level">Level:</label>
+  <select id="sankey-level">
+    <option value="category_l1" selected>L1 (broad)</option>
+    <option value="category_l2">L2 (detailed)</option>
+  </select>
+
+  <button id="sankey-generate">Generate</button>
+</div>
+
+<div id="sankey-loading" class="loading-spinner">Initializing DuckDB-Wasm…</div>
+<div id="sankey-chart" class="chart-container" style="display:none; min-height:500px;"></div>
+
+::: {.callout-tip}
+## Tip
+Try the L2 level to see subcategory detail (e.g., Groceries, Restaurants, Coffee Shops within Food).
+Narrow the date range to focus on specific periods like before/after a job change.
+:::
+
+```{=html}
+<script type="module">
+import { renderSankey, initDateBounds } from "./assets/js/sankey_ui.js";
+
+const startInput = document.getElementById("sankey-start");
+const endInput = document.getElementById("sankey-end");
+const levelSelect = document.getElementById("sankey-level");
+const generateBtn = document.getElementById("sankey-generate");
+const loadingDiv = document.getElementById("sankey-loading");
+const chartDiv = document.getElementById("sankey-chart");
+
+async function generate() {
+  const start = startInput.value ? startInput.value + "-01" : null;
+  const end = endInput.value ? endInput.value + "-01" : null;
+  const level = levelSelect.value;
+
+  if (start && end && start > end) {
+    alert("Start date must be before end date.");
+    return;
+  }
+
+  loadingDiv.style.display = "none";
+  chartDiv.style.display = "block";
+  await renderSankey("sankey-chart", { level, start, end });
+}
+
+generateBtn.addEventListener("click", generate);
+
+// Initialize date bounds and render default
+(async () => {
+  await initDateBounds(startInput, endInput);
+  loadingDiv.textContent = "Ready — click Generate";
+  loadingDiv.classList.remove("loading-spinner");
+})();
+</script>
+```

@@ -1,0 +1,59 @@
+---
+title: "Lifestyle Creep"
+subtitle: "How spending grows alongside income and life changes"
+execute:
+  echo: false
+---
+
+```{python}
+import sys
+sys.path.insert(0, "../..")
+from analysis.story_charts import (
+    lifestyle_creep_total_spend,
+    lifestyle_creep_by_category,
+)
+```
+
+## The Big Picture
+
+Over 10+ years, total monthly spending has risen steadily — driven by a combination of
+income growth, life transitions, and the gradual ratcheting of everyday costs that we
+call "lifestyle creep."
+
+The chart below shows monthly total spending (light) alongside a 6-month rolling average
+(bold). Gray bands mark major life events: job changes and a relocation.
+
+```{python}
+lifestyle_creep_total_spend().show()
+```
+
+A few patterns stand out:
+
+- **Steady upward trend** — spending grows roughly 2% per year even outside event windows.
+- **Step changes at events** — the relocation to a new city in 2019 produced a visible
+  jump in baseline costs (higher rent, adjustment period).
+- **Seasonal spikes** — November–December consistently shows holiday spending peaks.
+
+## Where Does the Money Go?
+
+Breaking spending into categories reveals which areas drive the most growth.
+
+```{python}
+lifestyle_creep_by_category().show()
+```
+
+Housing dominates the stack, as expected. But the more interesting story is in the
+middle layers — **Food** and **Shopping** grow disproportionately as income rises,
+while **Transportation** remains relatively stable.
+
+## What This Means
+
+Lifestyle creep isn't inherently bad — some spending growth reflects genuine quality-of-life
+improvements. The key insight is *awareness*: knowing which categories drift upward
+helps make deliberate choices about where to spend and where to hold the line.
+
+::: {.callout-note}
+## Data Note
+All figures are monthly aggregates. No individual transactions or merchant names are shown.
+Amounts are nominal (not inflation-adjusted).
+:::
