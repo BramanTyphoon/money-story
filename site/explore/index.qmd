@@ -1,0 +1,11 @@
+---
+title: "Explore"
+---
+
+This section will provide interactive tools for exploring the spending and income data:
+
+- **Categories Over Time** -- Multi-series time plots with drill-down and filtering
+- **Sankey Diagram** -- Visualize money flows for any date range
+- **SQL Playground** -- Run your own queries against the public dataset
+
+*Coming soon.*
