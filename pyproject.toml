@@ -11,6 +11,7 @@ dependencies = [
     "numpy",
     "plotly",
     "kaleido",
+    "jupyter",
 ]
 
 [tool.hatch.build.targets.wheel]

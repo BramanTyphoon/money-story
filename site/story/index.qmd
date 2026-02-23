@@ -1,7 +1,37 @@
 ---
 title: "The Story"
+format:
+  html:
+    page-layout: full
 ---
 
-This section will present a narrative data story exploring spending trends, lifestyle creep, income transitions, and how major life events shaped financial patterns over time.
+```{python}
+#| echo: false
+from analysis.story_charts import plot_income_over_time, plot_expenses_over_time
+```
 
-*Coming soon.*
+This is the story of a decade of living, recorded in spreadsheets. From a first job in Japan, to marriage in Singapore, to early parenthood and a PhD in the US, I tracked every cent that passed through my hands. Like life, the information is messy, and the recording medium even messier, but some life events and trends are clearly legible.
+
+The shaded regions on each chart mark life events: blue for career changes, green for family milestones, and purple for education.
+
+## Income
+
+```{python}
+#| echo: false
+plot_income_over_time()
+```
+
+From income alone, one can see a map of my career. In 2010 I took a pay cut from teaching English in Japan to researching remote sensing at the National University of Singapore. Over the next four years my real take-home income actually decreased, as performance and cost-of-living adjustments did not keep up with inflation. Conversely, my research assistant stipend increased in real terms over the 5 years of my PhD. Unsurprisingly, leaving academia for industry nearly doubled my take-home pay.
+
+## Expenditures
+
+```{python}
+#| echo: false
+plot_expenses_over_time()
+```
+
+<!-- Placeholder: describe spending trends. The move to the US brought higher housing costs. Children brought new expense categories. The 2020 responsibility switch with your partner changed the composition. Note that savings/investment transfers are excluded so this shows actual spending. -->
+
+## What the Numbers Don't Show
+
+<!-- Placeholder: discuss limitations. Separate finances until 2023 mean you're seeing only half the household picture. The responsibility switch in 2020 creates artificial discontinuities. Values are scaled for privacy. Transactions span 3 countries and currencies, all normalized to 2019 USD. -->

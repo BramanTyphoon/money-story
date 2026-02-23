@@ -21,17 +21,66 @@ PRIVATE_SOURCE = Path("data_private") / "categorized_budget_items_formatted.parq
 OUTPUT_DIR = Path("data_public")
 
 LIFE_EVENTS = [
-    {"date_start": date(2010, 8, 1), "date_end": date(2010, 10, 1), "event": "Moved to Singapore", "type": "move"},
-    {"date_start": date(2010, 10, 1), "date_end": date(2010, 10, 31), "event": "New job", "type": "career"},
-    {"date_start": date(2011, 11, 1), "date_end": date(2011, 11, 30), "event": "Married", "type": "family"},
-    {"date_start": date(2014, 12, 1), "date_end": date(2015, 1, 31), "event": "Moved back to USA", "type": "move"},
-    {"date_start": date(2015, 1, 1), "date_end": date(2015, 1, 31), "event": "Started PhD", "type": "career"},
-    {"date_start": date(2013, 1, 1), "date_end": date(2014, 12, 31), "event": "Completed Masters", "type": "education"},
-    {"date_start": date(2015, 1, 1), "date_end": date(2019, 12, 1), "event": "Completed PhD", "type": "education"},
-    {"date_start": date(2015, 4, 1), "date_end": date(2015, 5, 31), "event": "Birth of child #1", "type": "family"},
-    {"date_start": date(2018, 7, 1), "date_end": date(2018, 8, 31), "event": "Birth of child #2", "type": "family"},
-    {"date_start": date(2020, 1, 1), "date_end": date(2020, 3, 31), "event": "Data Science Fellowship", "type": "career"},
-    {"date_start": date(2020, 8, 1), "date_end": date(2020, 8, 31), "event": "Began at INFICON", "type": "career"},
+    {
+        "date_start": date(2009, 10, 1),
+        "date_end": date(2010, 6, 30),
+        "event": "Teaching in Japan",
+        "type": "career",
+    },
+    {
+        "date_start": date(2010, 8, 1),
+        "date_end": date(2010, 10, 1),
+        "event": "Moved to Singapore, started new job",
+        "type": "career",
+    },
+    {
+        "date_start": date(2011, 11, 1),
+        "date_end": date(2011, 11, 30),
+        "event": "Married",
+        "type": "family",
+    },
+    {
+        "date_start": date(2013, 1, 1),
+        "date_end": date(2014, 9, 30),
+        "event": "Masters degree",
+        "type": "education",
+    },
+    {
+        "date_start": date(2015, 1, 1),
+        "date_end": date(2019, 12, 1),
+        "event": "Moved to USA, began PhD",
+        "type": "education",
+    },
+    {
+        "date_start": date(2015, 4, 1),
+        "date_end": date(2015, 5, 31),
+        "event": "Birth of child #1",
+        "type": "family",
+    },
+    {
+        "date_start": date(2018, 7, 1),
+        "date_end": date(2018, 8, 31),
+        "event": "Birth of child #2",
+        "type": "family",
+    },
+    {
+        "date_start": date(2020, 1, 1),
+        "date_end": date(2020, 3, 31),
+        "event": "Data Science Fellowship",
+        "type": "career",
+    },
+    {
+        "date_start": date(2020, 8, 1),
+        "date_end": date(2020, 8, 31),
+        "event": "Began at INFICON",
+        "type": "career",
+    },
+    {
+        "date_start": date(2020, 12, 1),
+        "date_end": date(2020, 12, 31),
+        "event": "Swapped rent/childcare costs with partner",
+        "type": "family",
+    },
 ]
 
 
@@ -43,7 +92,7 @@ def build() -> None:
     rng = default_rng()
 
     df = pl.read_parquet(PRIVATE_SOURCE)
-    df = df.filter(pl.col("date") <= pl.datetime(2023, 12, 31))
+    df = df.filter(pl.col("date") <= pl.datetime(2022, 11, 30))
     scale_factor = rng.uniform(0.5, 2.0)
     df = df.with_columns((pl.col("value") * scale_factor).alias("value"))
 
@@ -67,7 +116,9 @@ def build() -> None:
     life_event_df = pl.DataFrame(LIFE_EVENTS, schema=EVENT_SCHEMA)
     life_event_df.write_parquet(OUTPUT_DIR / "events_public.parquet")
 
-    print(f"Wrote {len(df_expenses)} expense rows, {len(df_income)} income rows, {len(life_event_df)} events")
+    print(
+        f"Wrote {len(df_expenses)} expense rows, {len(df_income)} income rows, {len(life_event_df)} events"
+    )
 
 
 if __name__ == "__main__":

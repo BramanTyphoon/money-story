@@ -140,7 +140,7 @@ ul.task-list li input[type="checkbox"] {
 <h2 class="anchored" data-anchor-id="about-this-project">About This Project</h2>
 <p>What’s more exciting to a data scientist than data? Their own data! For more than a decade (2009–2022), I used an idiosyncratic spreadsheet template to manage my budget. This template was very human-readable and practical for tracking and planning purposes, but even Claude couldn’t parse it when it tried. This site is the culmination of a spare-time effort to extract all of the data from over a hundred such spreadsheets, representing every financial transaction I made over that time period. It provides a narrative story of my spending habits through stages of my early adulthood and interactive tools to explore the underlying data.</p>
 <p>In 2011 I became married, but my partner and I kept separate finances until 2023. This means that some categories may seem unrealistically small because you are only seeing my half of the equation. There are also some odd discontinuous jumps. For example, in 2020, we switched financial responsibilities: my partner began paying the rent while I picked up childcare costs. This makes it appear as if one category nearly disappears and one appears from nowhere.</p>
-<p>Don’t worry, in 2023 we combined finances and began using <a href="https://www.ynab.com">YNAB</a> to budget and track our expenses. Maybe in another decade I will replicate this project to include that data.</p>
+<p>Don’t worry, I did not continue using such an idiosyncratic system. In 2023 my partner and I combined finances and began using <a href="https://www.ynab.com">YNAB</a> to budget and track our expenses. Maybe in another decade I will replicate this project to include that data.</p>
 <section id="whats-here" class="level3">
 <h3 class="anchored" data-anchor-id="whats-here">What’s Here</h3>
 <ul>
@@ -150,13 +150,13 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="data-and-privacy" class="level3">
 <h3 class="anchored" data-anchor-id="data-and-privacy">Data and Privacy</h3>
-<p>This dataset includes transactions from 3 different countries: USA, Japan, and Singapore. All transactions were converted to USD using contemporaneous annual currency exchange rates from the US Treasury Department. All transactions were further adjusted to 2019 dollars using monthly CPI for all urban consumers (AUC) from Federal Reserve Economic Data. The year of normalization, 2019, was chosen to avoid the effect COVID and its aftermath played has on our perception of prices.</p>
+<p>This dataset includes transactions from 3 different countries: USA, Japan, and Singapore. All transactions were converted to USD using contemporaneous annual currency exchange rates from the US Treasury Department. All transactions were further adjusted to 2019 dollars using monthly CPI for all urban consumers (AUC) from Federal Reserve Economic Data. The year of normalization, 2019, was chosen to avoid the effect COVID and its aftermath have played on our perception of prices.</p>
 <p>All data has been aggregated to the monthly level. No individual transactions are exposed. Additionally, all dollar amounts have been scaled by a random factor to maintain some amount of privacy, but preserve relative trends and patterns.</p>
 <p>Similarly, life events have been defined over one to a few months to obscure exact dates, for privacy and security.</p>
 <p>The public dataset consists of three tables:</p>
 <ul>
 <li><strong>Expenses</strong> – Monthly spending by category and sub-category, modeled as source-to-destination flows</li>
-<li><strong>Income</strong> – Monthly income by source type</li>
+<li><strong>Income</strong> – Monthly take-home income by source type. Taxes, health insurance premiums, and 401k contributions, if any, have been extracted from these amounts.</li>
 <li><strong>Life Events</strong> – Key milestones (career changes, moves, family events) used as chart annotations</li>
 </ul>
 <p>Raw transaction data remains private and is never published.</p>

@@ -16,7 +16,14 @@ FLOW_SCHEMA = {
 
 FLOW_COLUMNS = list(FLOW_SCHEMA.keys())
 
-FLOW_GROUP_COLUMNS = ["date", "flow_type", "source", "destination", "sub_category", "category"]
+FLOW_GROUP_COLUMNS = [
+    "date",
+    "flow_type",
+    "source",
+    "destination",
+    "sub_category",
+    "category",
+]
 
 # --- Expense categorical values ---
 
@@ -82,13 +89,14 @@ EXPENSE_SUB_CATEGORY_VALUES = [
 
 INCOME_SOURCE_VALUES = ["Miscellaneous Income", "Reimbursements", "Salary/Wages"]
 
-INCOME_DESTINATION_VALUES = ["General Funds", "Savings"]
+INCOME_DESTINATION_VALUES = ["General Funds", "Savings", "Taxes"]
 
 INCOME_CATEGORY_VALUES = [
     "Miscellaneous Income",
     "Reimbursements",
     "Salary/Wages",
     "Transfer between accounts",
+    "Taxes",
 ]
 
 INCOME_SUB_CATEGORY_VALUES = [
@@ -98,6 +106,7 @@ INCOME_SUB_CATEGORY_VALUES = [
     "Salary/Wages",
     "Side Hustle (e.g. Juku)",
     "Transfer between accounts",
+    "Taxes",
     "Unknown Income",
 ]
 
