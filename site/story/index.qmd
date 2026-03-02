@@ -10,7 +10,7 @@ format:
 from analysis.story_charts import plot_income_over_time, plot_expenses_over_time
 ```
 
-This is the story of a decade of living, recorded in spreadsheets. From a first job in Japan, to marriage in Singapore, to early parenthood and a PhD in the US, I tracked every cent that passed through my hands. Like life, the information is messy, and the recording medium even messier, but some life events and trends are clearly legible.
+This is the story of a decade of living, recorded in spreadsheets. From a first job in Japan, to marriage in Singapore, to early parenthood and a PhD in the US, I tracked every financial transaction I made. Like life, the information is messy, and the recording medium even messier, but some life events and trends are clearly legible.
 
 The shaded regions on each chart mark life events: blue for career changes, green for family milestones, and purple for education.
 
@@ -30,7 +30,12 @@ From income alone, one can see a map of my career. In 2010 I took a pay cut from
 plot_expenses_over_time()
 ```
 
-<!-- Placeholder: describe spending trends. The move to the US brought higher housing costs. Children brought new expense categories. The 2020 responsibility switch with your partner changed the composition. Note that savings/investment transfers are excluded so this shows actual spending. -->
+One of the secondary motivations for making my financial tracking machine-readable was to judge the extent of my lifestyle creep. And judge it I do. 
+
+Lifestyle creep refers to the tendency for discretionary spending to increase with income. This effect can become problematic when expenses constantly match or exceed income, generating debt and preventing saving. Amusingly, moving from Japan to Singapore had nearly the opposite effect: my real income decreased, but my spending increased. In Japan I was able to save substantial sums, but used a large chunk of those savings to move to Singapore. My expenses have high month-to-month variance, but there is a clear increasing trend from August 2012 (immediately after my partner and I purchased an apartment) to August 2019.
+While in Singapore, my total expenses hovered near my total income, but I was still able to generate savings. Those sav
+
+Defining "discretionary" spending to quantify lifestyle creep can be difficult, because necessary budget items often have discretionary components.
 
 ## What the Numbers Don't Show
 
