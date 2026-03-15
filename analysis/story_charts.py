@@ -107,19 +107,59 @@ def plot_income_over_time(
     return fig
 
 
+def _filter_expenses(df: pl.DataFrame) -> pl.DataFrame:
+    """Apply standard expense filters (exclude savings, investments, transfers)."""
+    return df.filter(
+        ~pl.col("sub_category").is_in(
+            ["Savings/Investments", "Transfer between accounts"]
+        )
+    ).filter(pl.col("destination") != "Savings")
+
+
+def get_expenses_by_category(
+    expenses_path: str | Path = _DATA_DIR / "expenses_monthly.parquet",
+) -> list[dict]:
+    """Return per-category monthly expense totals as a list of dicts for ojs_define()."""
+    df = _filter_expenses(pl.read_parquet(expenses_path))
+
+    monthly = (
+        df.group_by("date", "category")
+        .agg(pl.col("value").sum().alias("value"))
+        .sort("date", "category")
+    )
+
+    return [
+        {
+            "date": row["date"].isoformat(),
+            "category": row["category"],
+            "value": row["value"],
+        }
+        for row in monthly.iter_rows(named=True)
+    ]
+
+
+def get_events(
+    events_path: str | Path = _DATA_DIR / "events_public.parquet",
+) -> list[dict]:
+    """Return life events as a list of dicts for ojs_define()."""
+    events = pl.read_parquet(events_path)
+    return [
+        {
+            "date_start": row["date_start"].isoformat(),
+            "date_end": row["date_end"].isoformat(),
+            "event": row["event"],
+            "type": row["type"],
+        }
+        for row in events.sort("date_start").iter_rows(named=True)
+    ]
+
+
 def plot_expenses_over_time(
     expenses_path: str | Path = _DATA_DIR / "expenses_monthly.parquet",
     events_path: str | Path = _DATA_DIR / "events_public.parquet",
 ) -> go.Figure:
     """Plot total monthly expenditures over time with life-event annotations."""
-    df = pl.read_parquet(expenses_path)
-
-    df = df.filter(
-        ~pl.col("sub_category").is_in(
-            ["Savings/Investments", "Transfer between accounts"]
-        )
-    )
-    df = df.filter(pl.col("destination") != "Savings")
+    df = _filter_expenses(pl.read_parquet(expenses_path))
 
     monthly = df.group_by("date").agg(pl.col("value").sum().alias("total")).sort("date")
 

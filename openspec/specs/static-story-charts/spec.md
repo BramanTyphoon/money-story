@@ -24,7 +24,7 @@ The `analysis/story_charts.py` module SHALL provide a `plot_expenses_over_time` 
 
 #### Scenario: Expense filtering
 - **WHEN** the function reads `expenses_monthly.parquet`
-- **THEN** it SHALL exclude rows where `sub_category` is "Savings/Investments" or "Transfer between accounts"
+- **THEN** it SHALL exclude rows where `sub_category` is "Savings/Investments" or "Transfer between accounts" and where `destination` is "Savings"
 
 #### Scenario: Expense aggregation
 - **WHEN** the filtered data is processed
@@ -36,7 +36,7 @@ The `analysis/story_charts.py` module SHALL provide a `plot_expenses_over_time` 
 
 #### Scenario: Expense rolling average
 - **WHEN** the figure is generated
-- **THEN** it SHALL contain a 6-month rolling average trace as a secondary line (lighter, thicker) using `min_periods=1`
+- **THEN** it SHALL contain a 7-month rolling average trace as a secondary line (lighter, thicker) using `min_periods=1`
 
 #### Scenario: Expense event annotations
 - **WHEN** the function reads `events_public.parquet`
