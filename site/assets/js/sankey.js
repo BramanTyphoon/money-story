@@ -1,0 +1,315 @@
+/**
+ * Interactive Sankey diagram with date range selection.
+ * Ported from BudgetTracker/budgettrack/plot.py.
+ */
+
+import { runQuery } from "./duckdb_init.js";
+
+// Category translation maps matching the Python implementation
+const EXPENSE_CATEGORY_MAP = {
+  "General Funds": "General Funds",
+  "Unknown": "Unknown",
+  "Rent/Mortgage": "Housing",
+  "Utilities": "Housing",
+  "Media/Subscriptions": "Entertainment",
+  "Healthcare/Insurance": "Healthcare/Insurance",
+  "Savings/Investments": "Savings/Investments",
+  "Transfer between accounts": "Savings/Investments",
+  "Groceries": "Food",
+  "Dining Out": "Food",
+  "Transportation": "Transportation",
+  "Child Education/Childcare": "Children",
+  "Parent Enrichment/Education": "Entertainment",
+  "Travel": "Travel",
+  "Entertainment": "Entertainment",
+  "Home Maintenance/Improvement": "Housing",
+  "Car/Car Maintenance": "Transportation",
+  "Household Goods": "Housing",
+  "Clothing": "Clothing",
+  "Charity": "Gifts/Charity",
+  "Hobbies": "Entertainment",
+  "Sports/Outdoors": "Entertainment",
+  "Miscellaneous": "Miscellaneous",
+  "Gifts": "Gifts/Charity",
+};
+
+const INCOME_CATEGORY_MAP = {
+  "Unknown Income": "Miscellaneous Income",
+  "Salary/Wages": "Salary/Wages",
+  "Side Hustle (e.g. Juku)": "Salary/Wages",
+  "Interest/Dividends": "Miscellaneous Income",
+  "Gift Income": "Miscellaneous Income",
+  "Refunds/Rebates": "Reimbursements",
+};
+
+const WEALTH_CATEGORIES = new Set([
+  "Savings/Investments",
+  "Transfer between accounts",
+]);
+
+const CATEGORY_COLORS = [
+  "rgba(31, 119, 180, 0.8)",
+  "rgba(255, 127, 14, 0.8)",
+  "rgba(44, 160, 44, 0.8)",
+  "rgba(214, 39, 40, 0.8)",
+  "rgba(148, 103, 189, 0.8)",
+  "rgba(140, 86, 75, 0.8)",
+  "rgba(227, 119, 194, 0.8)",
+  "rgba(127, 127, 127, 0.8)",
+  "rgba(188, 189, 34, 0.8)",
+  "rgba(23, 190, 207, 0.8)",
+];
+
+const ALL_EXPENSE_SUBCATS = new Set(Object.keys(EXPENSE_CATEGORY_MAP));
+const ALL_INCOME_SUBCATS = new Set(Object.keys(INCOME_CATEGORY_MAP));
+const ALL_SUBCATS = new Set([...ALL_EXPENSE_SUBCATS, ...ALL_INCOME_SUBCATS]);
+
+// Build color map for all unique categories
+const allCategories = new Set([
+  ...Object.values(EXPENSE_CATEGORY_MAP),
+  ...Object.values(INCOME_CATEGORY_MAP),
+]);
+const COLOR_BY_CATEGORY = {};
+let ci = 0;
+for (const cat of allCategories) {
+  COLOR_BY_CATEGORY[cat] = CATEGORY_COLORS[ci % CATEGORY_COLORS.length];
+  ci++;
+}
+
+function processRow(row) {
+  let subCategory = row.sub_category;
+
+  // Remap for income: Unknown → Unknown Income, Gifts → Gift Income
+  if (row.flow_type === "Income" && subCategory === "Unknown") {
+    subCategory = "Unknown Income";
+  }
+  if (row.flow_type === "Income" && subCategory === "Gifts") {
+    subCategory = "Gift Income";
+  }
+
+  // Filter out unknown sub-categories
+  if (!ALL_SUBCATS.has(subCategory)) return null;
+
+  // Map sub-category to category
+  const category =
+    row.flow_type === "Expense"
+      ? EXPENSE_CATEGORY_MAP[subCategory]
+      : INCOME_CATEGORY_MAP[subCategory];
+
+  if (!category) return null;
+
+  // Determine destination
+  let destination;
+  if (WEALTH_CATEGORIES.has(subCategory)) {
+    destination = "Savings";
+  } else if (row.flow_type === "Income") {
+    destination = "General Funds";
+  } else {
+    destination = category;
+  }
+
+  // Determine source
+  let source;
+  if (row.flow_type === "Income") {
+    if (ALL_EXPENSE_SUBCATS.has(subCategory)) {
+      source = "Reimbursements";
+    } else {
+      source = category;
+    }
+  } else {
+    source = row.source === "Savings" ? "Savings" : "General Funds";
+  }
+
+  return { subCategory, category, source, destination, value: Math.abs(row.value) };
+}
+
+async function buildSankey(startDate, endDate) {
+  // Query all flow data for the selected period
+  const periodRows = await runQuery(`
+    SELECT sub_category, flow_type, source, destination, SUM(value) as value
+    FROM (
+      SELECT * FROM expenses_monthly
+      UNION ALL
+      SELECT * FROM income_monthly
+    )
+    WHERE date >= '${startDate}' AND date <= '${endDate}'
+    GROUP BY sub_category, flow_type, source, destination
+  `);
+
+  // Process rows through category mapping
+  const flows = new Map(); // key: "source|destination|subCategory" → aggregated value
+  for (const row of periodRows) {
+    const processed = processRow(row);
+    if (!processed) continue;
+    if (processed.source === processed.destination) continue;
+    const key = `${processed.source}|${processed.destination}|${processed.subCategory}`;
+    flows.set(key, (flows.get(key) || 0) + processed.value);
+  }
+
+  // Compute carryover: savings balance before start date
+  const preSavingsResult = await runQuery(`
+    SELECT
+      COALESCE(SUM(CASE WHEN destination = 'Savings' THEN ABS(value) ELSE 0 END), 0) -
+      COALESCE(SUM(CASE WHEN source = 'Savings' THEN ABS(value) ELSE 0 END), 0) as balance
+    FROM (
+      SELECT * FROM expenses_monthly WHERE date < '${startDate}'
+      UNION ALL
+      SELECT * FROM income_monthly WHERE date < '${startDate}'
+    )
+    WHERE destination = 'Savings' OR source = 'Savings'
+  `);
+  const preSavings = preSavingsResult[0]?.balance || 0;
+
+  // General carryover: income (non-savings) minus expenses (non-savings) before start
+  const preGeneralResult = await runQuery(`
+    SELECT
+      COALESCE(SUM(CASE WHEN flow_type = 'Income' AND source != 'Savings' AND destination != 'Savings' THEN ABS(value) ELSE 0 END), 0) -
+      COALESCE(SUM(CASE WHEN flow_type = 'Expense' AND source != 'Savings' AND destination != 'Savings' THEN value ELSE 0 END), 0) as balance
+    FROM (
+      SELECT * FROM expenses_monthly WHERE date < '${startDate}'
+      UNION ALL
+      SELECT * FROM income_monthly WHERE date < '${startDate}'
+    )
+  `);
+  const preGeneral = preGeneralResult[0]?.balance || 0;
+
+  // Build node list
+  const labels = ["General Carryover", "Savings Carryover", "General Funds", "Savings"];
+  const labelSet = new Set(labels);
+
+  for (const key of flows.keys()) {
+    const [source, destination] = key.split("|");
+    if (!labelSet.has(source)) { labels.push(source); labelSet.add(source); }
+    if (!labelSet.has(destination)) { labels.push(destination); labelSet.add(destination); }
+  }
+
+  const labelToIndex = {};
+  labels.forEach((l, i) => { labelToIndex[l] = i; });
+
+  // Node colors
+  const nodeColors = [
+    "rgba(150,150,150,0.8)", // General Carryover
+    COLOR_BY_CATEGORY["Savings"] || COLOR_BY_CATEGORY["Savings/Investments"] || "rgba(150,150,150,0.8)",
+    ...labels.slice(2).map((l) => COLOR_BY_CATEGORY[l] || "rgba(150,150,150,0.8)"),
+  ];
+
+  // Build links
+  const linkSource = [0, 1];
+  const linkTarget = [2, 3];
+  const linkValue = [Math.max(0, preGeneral), Math.max(0, preSavings)];
+  const linkLabel = ["", ""];
+  const linkColor = [
+    (COLOR_BY_CATEGORY["General Funds"] || "rgba(150,150,150,0.8)").replace("0.8", "0.40"),
+    (COLOR_BY_CATEGORY["Savings"] || COLOR_BY_CATEGORY["Savings/Investments"] || "rgba(150,150,150,0.8)").replace("0.8", "0.40"),
+  ];
+
+  for (const [key, value] of flows) {
+    const [source, destination, subCategory] = key.split("|");
+    linkSource.push(labelToIndex[source]);
+    linkTarget.push(labelToIndex[destination]);
+    linkValue.push(value);
+    linkLabel.push(subCategory);
+    linkColor.push(
+      (COLOR_BY_CATEGORY[destination] || "rgba(150,150,150,0.8)").replace("0.8", "0.40")
+    );
+  }
+
+  // Format title dates
+  const startObj = new Date(startDate + "T00:00:00");
+  const endObj = new Date(endDate + "T00:00:00");
+  const months = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+  const title = `${months[startObj.getMonth()]} ${startObj.getFullYear()} – ${months[endObj.getMonth()]} ${endObj.getFullYear()} Budget Sankey Diagram (in 2019 USD)`;
+
+  const fig = {
+    data: [{
+      type: "sankey",
+      valueformat: ".0f",
+      valuesuffix: " USD",
+      node: {
+        pad: 15,
+        thickness: 15,
+        line: { color: "black", width: 0.5 },
+        label: labels,
+        color: nodeColors,
+      },
+      link: {
+        source: linkSource,
+        target: linkTarget,
+        value: linkValue,
+        label: linkLabel,
+        color: linkColor,
+      },
+    }],
+    layout: {
+      title: { text: title },
+      font: { size: 10 },
+      width: 1100,
+      height: 600,
+    },
+  };
+
+  Plotly.newPlot("sankey-chart", fig.data, fig.layout);
+}
+
+export async function initSankey() {
+  // Get date bounds from data
+  const bounds = await runQuery(`
+    SELECT MIN(date) as min_date, MAX(date) as max_date
+    FROM (
+      SELECT date FROM expenses_monthly
+      UNION ALL
+      SELECT date FROM income_monthly
+    )
+  `);
+
+  const minDate = String(bounds[0].min_date).slice(0, 10);
+  const maxDate = String(bounds[0].max_date).slice(0, 10);
+  const maxYear = new Date(maxDate + "T00:00:00").getFullYear();
+  const defaultStart = `${maxYear - 1}-01-01`;
+  const defaultEnd = `${maxYear - 1}-12-01`;
+
+  const container = document.getElementById("sankey-controls");
+
+  container.innerHTML = `
+    <div class="sankey-controls-row">
+      <label>Start: <input type="month" id="sankey-start" value="${defaultStart.slice(0, 7)}" min="${minDate.slice(0, 7)}" max="${maxDate.slice(0, 7)}"></label>
+      <label>End: <input type="month" id="sankey-end" value="${defaultEnd.slice(0, 7)}" min="${minDate.slice(0, 7)}" max="${maxDate.slice(0, 7)}"></label>
+      <button id="sankey-generate">Generate</button>
+      <span id="sankey-validation" style="color: red; margin-left: 1em;"></span>
+    </div>
+  `;
+
+  const startInput = document.getElementById("sankey-start");
+  const endInput = document.getElementById("sankey-end");
+  const generateBtn = document.getElementById("sankey-generate");
+  const validationMsg = document.getElementById("sankey-validation");
+
+  function validate() {
+    if (startInput.value > endInput.value) {
+      validationMsg.textContent = "Start date must be before end date.";
+      generateBtn.disabled = true;
+      return false;
+    }
+    validationMsg.textContent = "";
+    generateBtn.disabled = false;
+    return true;
+  }
+
+  startInput.addEventListener("change", validate);
+  endInput.addEventListener("change", validate);
+
+  generateBtn.addEventListener("click", async () => {
+    if (!validate()) return;
+    generateBtn.disabled = true;
+    generateBtn.textContent = "Generating…";
+    try {
+      await buildSankey(startInput.value + "-01", endInput.value + "-01");
+    } finally {
+      generateBtn.disabled = false;
+      generateBtn.textContent = "Generate";
+    }
+  });
+
+  // Initial render
+  await buildSankey(defaultStart, defaultEnd);
+}
