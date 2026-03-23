@@ -1,0 +1,18 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "money-story"
+version = "0.1.0"
+requires-python = ">=3.11"
+dependencies = [
+    "polars",
+    "numpy",
+    "plotly",
+    "kaleido",
+    "jupyter",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["analysis"]

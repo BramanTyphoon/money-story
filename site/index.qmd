@@ -1,0 +1,36 @@
+---
+title: "A Decade of Living"
+---
+
+## About This Project
+
+What's more exciting to a data scientist than data? Their own data! For more than a decade (2009--2022), I used an idiosyncratic spreadsheet template to manage my budget. This template was very human-readable and practical for tracking and planning purposes, but even Claude couldn't parse it when it tried. This site is the culmination of a spare-time effort to extract all of the data from over a hundred such spreadsheets, representing every financial transaction I made over that time period. It provides a narrative story of my spending habits through stages of my early adulthood and interactive tools to explore the underlying data.
+
+In 2011 I became married, but my partner and I kept separate finances until 2023. This means that some categories may seem unrealistically small because you are only seeing my half of the equation. There are also some odd discontinuous jumps. For example, in 2020, we switched financial responsibilities: my partner began paying the rent while I picked up childcare costs. This makes it appear as if one category nearly disappears and one appears from nowhere.
+
+Don't worry, I did not continue using such an idiosyncratic system. In 2023 my partner and I combined finances and began using [YNAB](https://www.ynab.com) to budget and track our expenses. Maybe in another decade I will replicate this project to include that data.
+
+### What's Here
+
+- **[Story](story/index.qmd)** -- A narrative walkthrough of spending trends, lifestyle changes, and how major life events (career moves, relocations, family milestones) shaped financial patterns.
+- **[Explore](explore/index.qmd)** -- Interactive tools to query and visualize the data yourself: category breakdowns over time, Sankey flow diagrams, and a SQL playground.
+
+### Data and Privacy
+
+This dataset includes transactions from 3 different countries: USA, Japan, and Singapore. All transactions were converted to USD using contemporaneous annual currency exchange rates from the US Treasury Department. All transactions were further adjusted to 2019 dollars using monthly CPI for all urban consumers (AUC) from Federal Reserve Economic Data. The year of normalization, 2019, was chosen to avoid the effect COVID and its aftermath have played on our perception of prices.
+
+All data has been aggregated to the monthly level. No individual transactions are exposed. Additionally, all dollar amounts have been scaled by a random factor to maintain some amount of privacy, but preserve relative trends and patterns.
+
+Similarly, life events have been defined over one to a few months to obscure exact dates, for privacy and security.
+
+The public dataset consists of three tables:
+
+- **Expenses** -- Monthly spending by category and sub-category, modeled as source-to-destination flows
+- **Income** -- Monthly take-home income by source type. Taxes, health insurance premiums, and 401k contributions, if any, have been extracted from these amounts.
+- **Life Events** -- Key milestones (career changes, moves, family events) used as chart annotations
+
+Raw transaction data remains private and is never published.
+
+### Technical Details
+
+This is a static site built with [Quarto](https://quarto.org/) and hosted on GitHub Pages. Interactive exploration pages use [DuckDB-Wasm](https://duckdb.org/docs/api/wasm/overview) to run SQL queries against Parquet files directly in your browser -- no server required.

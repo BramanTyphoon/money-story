@@ -1,0 +1,26 @@
+project:
+  type: website
+  output-dir: _site
+  pre-render: _pre-render.py
+  resources:
+    - assets/js/**
+
+execute:
+  freeze: auto
+  execute-dir: project
+
+website:
+  title: "A Decade of Living"
+  navbar:
+    left:
+      - text: Home
+        href: index.qmd
+      - text: Story
+        href: story/index.qmd
+      - text: Explore
+        href: explore/index.qmd
+
+format:
+  html:
+    theme: cosmo
+    css: assets/css/styles.css
