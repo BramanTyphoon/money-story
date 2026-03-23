@@ -48,7 +48,7 @@ def _add_event_annotations(
             ),
             annotation_text=row["event"],
             annotation_position="top left",
-            annotation_font_size=9,
+            annotation_font_size=11,
             annotation_textangle=-90,
         )
 
@@ -95,7 +95,6 @@ def plot_income_over_time(
     _add_event_annotations(fig, events_path)
 
     fig.update_layout(
-        title="Income Over Time",
         xaxis_title="Date",
         yaxis_title="Monthly Income (USD, scaled)",
         hovermode="x unified",
@@ -157,9 +156,23 @@ def get_events(
 def plot_expenses_over_time(
     expenses_path: str | Path = _DATA_DIR / "expenses_monthly.parquet",
     events_path: str | Path = _DATA_DIR / "events_public.parquet",
+    exclude_categories: list[str] | None = None,
+    title: str = "",
 ) -> go.Figure:
-    """Plot total monthly expenditures over time with life-event annotations."""
+    """Plot total monthly expenditures over time with life-event annotations.
+
+    Parameters
+    ----------
+    exclude_categories : list[str] | None
+        Category values (from the ``category`` column) to exclude from the
+        aggregation.  Applied *after* the standard savings/transfer filter.
+    title : str
+        Chart title.
+    """
     df = _filter_expenses(pl.read_parquet(expenses_path))
+
+    if exclude_categories:
+        df = df.filter(~pl.col("category").is_in(exclude_categories))
 
     monthly = df.group_by("date").agg(pl.col("value").sum().alias("total")).sort("date")
 
@@ -194,7 +207,6 @@ def plot_expenses_over_time(
     _add_event_annotations(fig, events_path)
 
     fig.update_layout(
-        title="Expenditures Over Time",
         xaxis_title="Date",
         yaxis_title="Monthly Expenses (USD, scaled)",
         hovermode="x unified",
@@ -202,5 +214,8 @@ def plot_expenses_over_time(
         width=1100,
         height=500,
     )
+
+    if title:
+        fig.update_layout(title=title)
 
     return fig

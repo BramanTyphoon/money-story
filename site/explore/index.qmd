@@ -20,7 +20,7 @@ format:
 ## Sankey Diagram {#sankey}
 
 <div id="sankey-controls" style="display: none;"></div>
-<div id="sankey-chart"></div>
+<div id="sankey-chart" style="margin-top: 1em;"></div>
 
 ## SQL Playground {#sql-playground}
 
@@ -29,10 +29,10 @@ format:
 
 <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
 <script type="module">
-import { getConnection } from "./assets/js/duckdb_init.js";
-import { initCategoriesChart } from "./assets/js/explore_charts.js";
-import { initSankey } from "./assets/js/sankey.js";
-import { initSqlPlayground } from "./assets/js/sql_playground.js";
+import { getConnection } from "../assets/js/duckdb_init.js";
+import { initCategoriesChart } from "../assets/js/explore_charts.js";
+import { initSankey } from "../assets/js/sankey.js";
+import { initSqlPlayground } from "../assets/js/sql_playground.js";
 
 try {
   await getConnection();

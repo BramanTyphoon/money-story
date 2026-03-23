@@ -13,14 +13,24 @@ The `analysis/story_charts.py` module SHALL provide a `plot_income_over_time` fu
 
 #### Scenario: Income rolling average
 - **WHEN** the figure is generated
-- **THEN** it SHALL contain a 6-month rolling average trace as a secondary line (lighter, thicker) using `min_periods=1` to avoid gaps at the start
+- **THEN** it SHALL contain a 7-month centered rolling average trace as a secondary line (lighter, thicker) using `min_periods=1` to avoid gaps at the start
 
 #### Scenario: Income event annotations
 - **WHEN** the function reads `events_public.parquet`
 - **THEN** it SHALL add a `vrect` annotation for each life event spanning its date range, colored by event type (career=blue, move=orange, family=green, education=purple) with semi-transparent fill and the event name as a label
 
 ### Requirement: Expenses over time chart function
-The `analysis/story_charts.py` module SHALL provide a `plot_expenses_over_time` function that accepts optional file paths for expenses data and events data, and returns a `plotly.graph_objects.Figure` showing total monthly expenditures over time.
+The `analysis/story_charts.py` module SHALL provide a `plot_expenses_over_time` function that accepts optional file paths for expenses data and events data, an optional `exclude_categories` list to remove specific categories from the aggregation, an optional `title` string, and returns a `plotly.graph_objects.Figure` showing total monthly expenditures over time.
+
+#### Scenario: Category exclusion
+- **WHEN** the function is called with `exclude_categories=["Housing", "Children"]`
+- **THEN** it SHALL exclude rows where the `category` column matches any value in the list, after applying the standard savings/transfer filter
+
+#### Scenario: Custom title
+- **WHEN** the function is called with a non-empty `title` string
+- **THEN** the figure layout SHALL include that string as the chart title
+- **WHEN** the function is called without a `title` or with an empty string
+- **THEN** the figure SHALL have no title
 
 #### Scenario: Expense filtering
 - **WHEN** the function reads `expenses_monthly.parquet`

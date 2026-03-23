@@ -73,7 +73,7 @@ ul.task-list li input[type="checkbox"] {
 <link rel="stylesheet" href="../assets/css/styles.css">
 </head>
 
-<body class="nav-fixed fullcontent quarto-light">
+<body class="nav-fixed quarto-light">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
@@ -110,12 +110,12 @@ ul.task-list li input[type="checkbox"] {
     </nav>
 </header>
 <!-- content -->
-<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
     
 <!-- main -->
-<main class="content" id="quarto-document-content">
+<main class="content column-page" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
@@ -124,7 +124,7 @@ ul.task-list li input[type="checkbox"] {
 
 
 
-<div class="quarto-title-meta">
+<div class="quarto-title-meta column-page">
 
     
   
@@ -136,15 +136,69 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<p>This section will provide interactive tools for exploring the spending and income data:</p>
-<ul>
-<li><strong>Categories Over Time</strong> – Multi-series time plots with drill-down and filtering</li>
-<li><strong>Sankey Diagram</strong> – Visualize money flows for any date range</li>
-<li><strong>SQL Playground</strong> – Run your own queries against the public dataset</li>
-</ul>
-<p><em>Coming soon.</em></p>
+<div id="loading-indicator" style="text-align: center; padding: 2em; font-size: 1.2em; color: #666;">
+<p>Loading DuckDB-Wasm and data…</p>
+</div>
+<section id="categories" class="level2">
+<h2 class="anchored" data-anchor-id="categories">Categories Over Time</h2>
+<div id="categories-controls" style="display: none;">
+<div id="category-checkboxes">
+
+</div>
+<div id="ma-control" style="margin-top: 0.5em;">
+
+</div>
+</div>
+<div id="categories-chart">
+
+</div>
+</section>
+<section id="sankey" class="level2">
+<h2 class="anchored" data-anchor-id="sankey">Sankey Diagram</h2>
+<div id="sankey-controls" style="display: none;">
+
+</div>
+<div id="sankey-chart" style="margin-top: 1em;">
+
+</div>
+</section>
+<section id="sql-playground" class="level2">
+<h2 class="anchored" data-anchor-id="sql-playground">SQL Playground</h2>
+<div id="sql-controls" style="display: none;">
+
+</div>
+<div id="sql-results">
+
+</div>
+<script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+<script type="module">
+import { getConnection } from "../assets/js/duckdb_init.js";
+import { initCategoriesChart } from "../assets/js/explore_charts.js";
+import { initSankey } from "../assets/js/sankey.js";
+import { initSqlPlayground } from "../assets/js/sql_playground.js";
+
+try {
+  await getConnection();
+  document.getElementById("loading-indicator").style.display = "none";
+
+  document.getElementById("categories-controls").style.display = "";
+  document.getElementById("sankey-controls").style.display = "";
+  document.getElementById("sql-controls").style.display = "";
+
+  await Promise.all([
+    initCategoriesChart(),
+    initSankey(),
+    initSqlPlayground(),
+  ]);
+} catch (err) {
+  document.getElementById("loading-indicator").textContent =
+    "Failed to initialize: " + err.message;
+  console.error(err);
+}
+</script>
 
 
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">

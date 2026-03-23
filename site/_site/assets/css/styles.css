@@ -1,1 +1,114 @@
 /* Money Story - Global Styles */
+
+/* Figure captions */
+.figure-caption {
+  font-size: 0.9em;
+  color: #555;
+  margin-top: -0.5em;
+  margin-bottom: 1.5em;
+  line-height: 1.4;
+}
+
+/* Explore page: category checkboxes */
+.explore-checkboxes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5em 1.5em;
+}
+
+/* Explore page: Sankey controls */
+.sankey-controls-row {
+  display: flex;
+  align-items: center;
+  gap: 1em;
+  flex-wrap: wrap;
+  margin-bottom: 1em;
+}
+.sankey-controls-row label {
+  font-weight: bold;
+}
+.sankey-controls-row input[type="month"] {
+  padding: 0.3em 0.5em;
+}
+
+/* Explore page: SQL playground */
+#sql-textarea {
+  width: 100%;
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+  font-size: 0.9em;
+  padding: 0.75em;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  resize: vertical;
+}
+.sql-recipe-row {
+  margin-bottom: 0.5em;
+}
+.sql-recipe-row select {
+  padding: 0.3em 0.5em;
+}
+.sql-button-row {
+  margin-top: 0.5em;
+  margin-bottom: 1em;
+}
+.sql-button-row button,
+.sankey-controls-row button {
+  padding: 0.4em 1.2em;
+  font-size: 1em;
+  cursor: pointer;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background: #f8f8f8;
+}
+.sql-button-row button:hover,
+.sankey-controls-row button:hover {
+  background: #e8e8e8;
+}
+.sql-button-row button:disabled,
+.sankey-controls-row button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+.sql-results-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9em;
+}
+.sql-results-table th,
+.sql-results-table td {
+  border: 1px solid #ddd;
+  padding: 0.4em 0.6em;
+  text-align: left;
+}
+.sql-results-table th {
+  background: #f5f5f5;
+  font-weight: bold;
+}
+.sql-results-table tr:nth-child(even) {
+  background: #fafafa;
+}
+.sql-error {
+  background: #fff0f0;
+  border: 1px solid #e88;
+  border-radius: 4px;
+  padding: 0.75em;
+  color: #c00;
+}
+.sql-no-results {
+  color: #666;
+  font-style: italic;
+}
+.sql-truncation-note {
+  color: #666;
+  font-size: 0.9em;
+  margin-top: 0.5em;
+}
+.sql-table-ref {
+  margin-bottom: 1em;
+}
+.sql-table-ref ul {
+  margin-top: 0.3em;
+}
+.sql-table-ref code {
+  font-weight: bold;
+}

@@ -25,20 +25,41 @@
     "href": "story/index.html#income",
     "title": "The Story",
     "section": "Income",
-    "text": "Income\n\n\n                            \n                                            \n\n\nFrom income alone, one can see a map of my career. In 2010 I took a pay cut from teaching English in Japan to researching remote sensing at the National University of Singapore. Over the next four years my real take-home income actually decreased, as performance and cost-of-living adjustments did not keep up with inflation. Conversely, my research assistant stipend increased in real terms over the 5 years of my PhD. Unsurprisingly, leaving academia for industry nearly doubled my take-home pay."
+    "text": "Income\nFrom income alone, one can see a map of my career (Fig. 1). In 2010 I took a pay cut from teaching English in Japan to researching remote sensing at the National University of Singapore. Over the next four years my real take-home income actually decreased, as performance and cost-of-living adjustments did not keep up with inflation. Conversely, my research assistant stipend increased in real terms over the 5 years of my PhD. Unsurprisingly, leaving academia for industry nearly doubled my take-home pay.\n\n\n                            \n                                            \n\n\n\nFigure 1. Total monthly income over time with a 7-month rolling average. Shaded regions mark career changes, family milestones, and education transitions."
   },
   {
     "objectID": "story/index.html#expenditures",
     "href": "story/index.html#expenditures",
     "title": "The Story",
     "section": "Expenditures",
-    "text": "Expenditures\n\n\n                            \n                                            \n\n\nOne of the secondary motivations for making my financial tracking machine-readable was to judge the extent of my lifestyle creep. And judge it I do.\nLifestyle creep refers to the tendency for discretionary spending to increase with income. This effect can become problematic when expenses constantly match or exceed income, generating debt and preventing saving. Amusingly, moving from Japan to Singapore had nearly the opposite effect: my real income decreased, but my spending increased. In Japan I was able to save substantial sums, but used a large chunk of those savings to move to Singapore. My expenses have had high month-to-month variance, but there is a clear increasing trend from August 2012 (immediately after my partner and I purchased an apartment) to August 2019 and a large jump in 2020 after I entered industry.\nNot all of the increases in expenditures outlined above are due to lifestyle creep. The jump in 2020 is in part due to an accounting change, as I traded rent obligations with my partner in exchange for childcare, and childcare was much more costly than our rent at the time. Additionally, lifestyle creep applies to discretionary spending, not gross expenses, and the line between the two can be blurry. For example, throughout the study period my partner and I moved into larger homes with higher rent as our family grew. Our first child was born when we lived in a studio apartment and by the end of 2022 we lived in a two bedroom apartment that was at least twice as large as the studio. Housing is a necessity, but to some extent choice of housing is discretionary. For example, we chose the two bedroom apartment in part because it was near public transit and within walking distance of a good elementary shool. What portion of that rent was necessary, and what portion was a discretionary choice of location and size?\nUse the interactive chart below to examine the effect of removing particular categories of expenses. Deselect categories you consider non-discretionary to see how the spending trend changes. Generating and answering these questions is the fun part of data science, underwritten by painstaking data collection and cleaning."
+    "text": "Expenditures\nOne of the secondary motivations for making my financial tracking machine-readable was to judge the extent of my lifestyle creep. And judge it I do.\nLifestyle creep refers to the tendency for discretionary spending to increase with income. This effect can become problematic when expenses constantly match or exceed income, generating debt and preventing saving. Amusingly, moving from Japan to Singapore had nearly the opposite effect: my real income decreased, but my spending increased (Fig. 2). In Japan I was able to save substantial sums, but used a large chunk of those savings to move to Singapore. My expenses have had high month-to-month variance, but there is a clear increasing trend from August 2012 (immediately after my partner and I purchased an apartment) to August 2019 and a large jump in 2020 after I entered industry.\n\n\n                            \n                                            \n\n\n\nFigure 2. Total monthly expenditures over time. The rolling average reveals long-term spending trends beneath the month-to-month variance.\n\nNot all of the increases in expenditures outlined above are due to lifestyle creep. The jump in 2020 is in part due to an accounting change, as I traded rent obligations with my partner in exchange for childcare, and childcare was much more costly than our rent at the time. Additionally, lifestyle creep applies to discretionary spending, not gross expenses, and the line between the two can be blurry. For example, throughout the study period my partner and I moved into larger homes with higher rent as our family grew. Our first child was born when we lived in a studio apartment and by the end of 2022 we lived in a two bedroom apartment that was at least twice as large as the studio. Housing is a necessity, but to some extent choice of housing is discretionary. For example, we chose the two bedroom apartment in part because it was near public transit and within walking distance of a good elementary shool. What portion of that rent was necessary, and what portion was a discretionary choice of location and size?\nEven with Housing and Childcare removed (Fig. 3), there clearly exists an increase in spending following my entry to industry. This is a clear signal of lifestyle creep, though it does not rise to the level that it is creating debt. This plot invites me to re-evaluate my spending and see if there isn’t frivolous spending I can eliminate.\nTo conduct your own analyses, please head to the Explore tab, where you can run queries against the data, generate Sankey plots, and reproduce Fig. 3 with different categories included or removed.\n\n\n                            \n                                            \n\n\n\nFigure 3. Monthly expenditures with Housing and Children categories removed, isolating more discretionary spending. For a more detailed breakdown, visit the Explore tab."
   },
   {
     "objectID": "explore/index.html",
     "href": "explore/index.html",
     "title": "Explore",
     "section": "",
-    "text": "This section will provide interactive tools for exploring the spending and income data:\n\nCategories Over Time – Multi-series time plots with drill-down and filtering\nSankey Diagram – Visualize money flows for any date range\nSQL Playground – Run your own queries against the public dataset\n\nComing soon."
+    "text": "Loading DuckDB-Wasm and data…"
+  },
+  {
+    "objectID": "explore/index.html#categories",
+    "href": "explore/index.html#categories",
+    "title": "Explore",
+    "section": "Categories Over Time",
+    "text": "Categories Over Time"
+  },
+  {
+    "objectID": "explore/index.html#sankey",
+    "href": "explore/index.html#sankey",
+    "title": "Explore",
+    "section": "Sankey Diagram",
+    "text": "Sankey Diagram"
+  },
+  {
+    "objectID": "explore/index.html#sql-playground",
+    "href": "explore/index.html#sql-playground",
+    "title": "Explore",
+    "section": "SQL Playground",
+    "text": "SQL Playground"
   }
 ]

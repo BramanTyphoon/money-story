@@ -75,12 +75,6 @@ LIFE_EVENTS = [
         "event": "Began at INFICON",
         "type": "career",
     },
-    {
-        "date_start": date(2020, 12, 1),
-        "date_end": date(2020, 12, 31),
-        "event": "Swapped rent/childcare costs with partner",
-        "type": "family",
-    },
 ]
 
 
