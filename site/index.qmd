@@ -12,7 +12,7 @@ Don't worry, I did not continue using such an idiosyncratic system. In 2023 my p
 
 ### What's Here
 
-- **[Story](story/index.qmd)** -- A narrative walkthrough of spending trends, lifestyle changes, and how major life events (career moves, relocations, family milestones) shaped financial patterns.
+- **[Story](story/index.qmd)** -- A narrative walkthrough of my career, spending trends, lifestyle changes, and how major life events (career moves, relocations, family milestones) shaped financial patterns.
 - **[Explore](explore/index.qmd)** -- Interactive tools to query and visualize the data yourself: category breakdowns over time, Sankey flow diagrams, and a SQL playground.
 
 ### Data and Privacy
@@ -29,8 +29,8 @@ The public dataset consists of three tables:
 - **Income** -- Monthly take-home income by source type. Taxes, health insurance premiums, and 401k contributions, if any, have been extracted from these amounts.
 - **Life Events** -- Key milestones (career changes, moves, family events) used as chart annotations
 
-Raw transaction data remains private and is never published.
+Raw transaction data remain private and are never published.
 
 ### Technical Details
 
-This is a static site built with [Quarto](https://quarto.org/) and hosted on GitHub Pages. Interactive exploration pages use [DuckDB-Wasm](https://duckdb.org/docs/api/wasm/overview) to run SQL queries against Parquet files directly in your browser -- no server required.
+This Home tab and the [Story](story/index.qmd) tab are static pages built with [Quarto](https://quarto.org/). The [Explore](explore/index.qmd) tab contains interactive plots that use [DuckDB-Wasm](https://duckdb.org/docs/api/wasm/overview) to run SQL queries against Parquet files directly in your browser -- no server required.

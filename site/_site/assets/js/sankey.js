@@ -89,48 +89,6 @@ function computeRollingAverage(values, window) {
   });
 }
 
-function processRow(row) {
-  let subCategory = row.sub_category;
-
-  if (row.flow_type === "Income" && subCategory === "Unknown") {
-    subCategory = "Unknown Income";
-  }
-  if (row.flow_type === "Income" && subCategory === "Gifts") {
-    subCategory = "Gift Income";
-  }
-
-  if (!ALL_SUBCATS.has(subCategory)) return null;
-
-  const category =
-    row.flow_type === "Expense"
-      ? EXPENSE_CATEGORY_MAP[subCategory]
-      : INCOME_CATEGORY_MAP[subCategory];
-
-  if (!category) return null;
-
-  let destination;
-  if (WEALTH_CATEGORIES.has(subCategory)) {
-    destination = "Savings";
-  } else if (row.flow_type === "Income") {
-    destination = "General Funds";
-  } else {
-    destination = category;
-  }
-
-  let source;
-  if (row.flow_type === "Income") {
-    if (ALL_EXPENSE_SUBCATS.has(subCategory)) {
-      source = "Reimbursements";
-    } else {
-      source = category;
-    }
-  } else {
-    source = row.source === "Savings" ? "Savings" : "General Funds";
-  }
-
-  return { subCategory, category, source, destination, value: Math.abs(row.value) };
-}
-
 async function buildSankey(startDate, endDate) {
   const periodRows = await runQuery(`
     SELECT sub_category, flow_type, source, destination, SUM(value) as value
@@ -145,7 +103,8 @@ async function buildSankey(startDate, endDate) {
 
   const flows = new Map();
   for (const row of periodRows) {
-    const processed = processRow(row);
+    const processed = row;
+    processed.value = Math.abs(processed.value);
     if (!processed) continue;
     if (processed.source === processed.destination) continue;
     const key = `${processed.source}|${processed.destination}|${processed.subCategory}`;
@@ -217,7 +176,7 @@ async function buildSankey(startDate, endDate) {
 
   const startObj = new Date(startDate + "T00:00:00");
   const endObj = new Date(endDate + "T00:00:00");
-  const monthNames = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+  const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
   const title = `${monthNames[startObj.getMonth()]} ${startObj.getFullYear()} – ${monthNames[endObj.getMonth()]} ${endObj.getFullYear()} Budget Sankey Diagram (in 2019 USD)`;
 
   Plotly.newPlot("sankey-chart", [{
