@@ -9,6 +9,7 @@ Both annotated with life-event vertical regions.
 
 from pathlib import Path
 
+import numpy as np
 import polars as pl
 import plotly.graph_objects as go
 
@@ -151,6 +152,79 @@ def get_events(
         }
         for row in events.sort("date_start").iter_rows(named=True)
     ]
+
+
+def bounded_cumsum(
+    series: pl.Series, lower: float = -np.inf, upper: float = np.inf
+) -> pl.Series:
+    values = series.to_numpy()
+    out = np.empty_like(values)
+    curr = 0
+    for i, x in enumerate(values):
+        curr = max(lower, min(upper, curr + x))
+        out[i] = curr
+    return pl.Series(out)
+
+
+def plot_savings_over_time(
+    expenses_path: str | Path = _DATA_DIR / "expenses_monthly.parquet",
+    income_path: str | Path = _DATA_DIR / "income_monthly.parquet",
+    events_path: str | Path = _DATA_DIR / "events_public.parquet",
+) -> go.Figure:
+    """Plot cumulative savings accumulation over time with life-event annotations."""
+    df = pl.concat([pl.read_parquet(expenses_path), pl.read_parquet(income_path)])
+
+    savings = (
+        df.with_columns(
+            pl.when(
+                (pl.col("source") == "Savings")
+                & (pl.col("sub_category") != "Savings/Investments")
+                & (pl.col("sub_category") != "Transfer between accounts")
+            )
+            .then(-pl.col("value"))
+            .otherwise(
+                pl.when(pl.col("destination") == "Savings")
+                .then(pl.col("value"))
+                .otherwise(-pl.col("value"))
+            )
+            .alias("signed_value")
+        )
+        .group_by("date")
+        .agg(pl.col("signed_value").sum().alias("net"))
+        .sort("date")
+        .with_columns(
+            pl.col("net")
+            .map_batches(lambda x: bounded_cumsum(x, lower=0))
+            .alias("cumulative")
+        )
+    )
+
+    dates = savings["date"].to_list()
+    cumulative = savings["cumulative"].to_list()
+
+    fig = go.Figure()
+    fig.add_trace(
+        go.Scatter(
+            x=dates,
+            y=cumulative,
+            mode="lines",
+            name="Cumulative Savings",
+            line=dict(color="rgba(31, 119, 180, 1)", width=2),
+        )
+    )
+
+    _add_event_annotations(fig, events_path)
+
+    fig.update_layout(
+        xaxis_title="Date",
+        yaxis_title="Cumulative Savings (USD, scaled)",
+        hovermode="x unified",
+        template="plotly_white",
+        width=1100,
+        height=500,
+    )
+
+    return fig
 
 
 def plot_expenses_over_time(

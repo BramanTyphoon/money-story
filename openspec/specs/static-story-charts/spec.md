@@ -65,3 +65,48 @@ Both chart functions SHALL return a `plotly.graph_objects.Figure` that can be di
 #### Scenario: Figure display in Quarto
 - **WHEN** a Python cell calls a chart function and the result is the last expression
 - **THEN** Quarto SHALL render the figure as an interactive Plotly HTML widget in the page output
+
+### Requirement: Savings accumulation chart function
+The `analysis/story_charts.py` module SHALL provide a `plot_savings_over_time` function that accepts optional file paths for expenses data, income data, and events data, and returns a `plotly.graph_objects.Figure` showing cumulative savings accumulation over time.
+
+#### Scenario: Data loading
+- **WHEN** the function is called
+- **THEN** it SHALL read both `expenses_monthly.parquet` and `income_monthly.parquet` and concatenate them into a single DataFrame before computing signed values
+
+#### Scenario: Signed value calculation
+The function assigns a signed value to every row (no rows are filtered out):
+- **WHEN** a row has `source == "Savings"` AND `sub_category` is not `"Savings/Investments"` or `"Transfer between accounts"`
+- **THEN** its signed value SHALL be `-value` (a withdrawal from savings, reducing the total)
+- **WHEN** a row has `destination == "Savings"` (and does not match the above condition)
+- **THEN** its signed value SHALL be `+value` (a deposit into savings, increasing the total)
+- **WHEN** a row matches neither of the above conditions (includes all regular expense rows and all income rows)
+- **THEN** its signed value SHALL be `-value` (income rows carry negative values in the parquet, so negation makes them positive contributions; expense rows carry positive values, so negation subtracts them)
+
+#### Scenario: Monthly aggregation
+- **WHEN** the signed values are computed
+- **THEN** it SHALL group by `date` and sum the signed values to produce one net savings amount per month
+
+#### Scenario: Bounded cumulative sum
+- **WHEN** the monthly net totals are computed
+- **THEN** it SHALL sort by `date` ascending and apply a cumulative sum floored at `0`, so the running total never goes below zero
+
+#### Scenario: Single cumulative line trace
+- **WHEN** the figure is generated
+- **THEN** it SHALL contain exactly one line trace showing the cumulative savings series, colored `rgba(31, 119, 180, 1)` with `width=2`
+- **THEN** it SHALL NOT contain a rolling average trace
+
+#### Scenario: Event annotations
+- **WHEN** the function reads `events_public.parquet`
+- **THEN** it SHALL add a `vrect` annotation for each life event spanning its date range, colored by event type (career=blue, move=orange, family=green, education=purple) with semi-transparent fill and the event name as a label, identical in style to the existing chart functions
+
+#### Scenario: Y-axis label
+- **WHEN** the figure layout is configured
+- **THEN** the y-axis title SHALL be `"Cumulative Savings (USD, scaled)"`
+
+#### Scenario: Default file paths
+- **WHEN** the function is called with no arguments from a Python cell in a `.qmd` file rendered from `site/`
+- **THEN** it SHALL read from `data_public/expenses_monthly.parquet`, `data_public/income_monthly.parquet`, and `data_public/events_public.parquet` via the symlink, without error
+
+#### Scenario: Figure return
+- **WHEN** the function is called and the result is the last expression in a Quarto Python cell
+- **THEN** Quarto SHALL render the figure as an interactive Plotly HTML widget in the page output
