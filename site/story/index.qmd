@@ -10,6 +10,7 @@ format:
 from analysis.story_charts import (
     plot_income_over_time,
     plot_expenses_over_time,
+    plot_savings_over_time,
 )
 ```
 
@@ -54,4 +55,12 @@ plot_expenses_over_time(
 <p class="figure-caption"><b>Figure 3.</b> Monthly expenditures with Housing and Children categories removed, isolating more discretionary spending. For a more detailed breakdown, visit the <a href="../explore/">Explore</a> tab.</p>
 
 ## Savings
+
+From the start, I tried to be frugal with my income, and this is reflected in my savings accumulation over the study period (Fig. 4). While in Japan I managed to save money I subsequently used to move to and establish myself in Singapore. In Singapore I spent some of the savings in the course of getting married, but built them back up slowly over the next couple years. However, my move back to the United States was expensive, and soon after the birth of my first child, I was forced to supplement my income with savings. By the end of my PhD, I had exhausted all of my discretionary long-term savings. Fortunately, my savings and my partner's employment outside of academia at least prevented us from going into debt. Immediately upon exiting academia, I started contributing heavily to retirement and college savings accounts to make up for lost time.
+
+```{python}
+#| echo: false
+plot_savings_over_time()
+```
+<p class="figure-caption"><b>Figure 4.</b> Discretionary savings accumulation from post-tax income. For this plot, any money not spent in the month it is earned is included in savings. Thus, this plot does not distinguish between intentional savings (e.g. retirement account contributions or planning for wedding or travel) and keeping the budget in the black. This plot includes only post-tax income, so it includes contributions to Roth IRA and college savings accounts (529), but not to 401k or FSA accounts.</p>
 
