@@ -24,10 +24,12 @@ async function initConnection() {
 
   const conn = await db.connect();
 
-  // Register Parquet files — resolve data_public/ relative to site root
-  const siteRoot = new URL("/", window.location.href).href;
+  // Register Parquet files — resolve data_public/ relative to this module's location
+  // import.meta.url is e.g. .../money-story/assets/js/duckdb_init.js
+  // so ../../data_public/ correctly resolves to .../money-story/data_public/
+  const dataBase = new URL("../../data_public/", import.meta.url).href;
   for (const { name, file } of PARQUET_FILES) {
-    const url = `${siteRoot}data_public/${file}`;
+    const url = `${dataBase}${file}`;
     const response = await fetch(url);
     if (!response.ok) {
       throw new Error(`Failed to fetch ${url}: ${response.status}`);
