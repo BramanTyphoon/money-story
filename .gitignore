@@ -127,5 +127,6 @@ cython_debug/
 data_private/
 .claude/commands/opsx/
 .claude/skilles/openspec*
+.claude/settings.local.json
 .github/prompts/opsx*
 .github/skills/openspec*
